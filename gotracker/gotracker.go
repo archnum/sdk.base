@@ -11,9 +11,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/archnum/sdk.base/dstack"
 	"github.com/archnum/sdk.base/kv"
 	"github.com/archnum/sdk.base/logger"
+	"github.com/archnum/sdk.base/util"
 )
 
 var (
@@ -84,7 +84,7 @@ func (gt *GoTracker) Go(name string, fn GoFunc) {
 						"GoTracker error recovered",
 						kv.String("name", gt.name),
 						kv.Any("data", data),
-						kv.String("stack", dstack.String(5)),
+						kv.String("stack", util.Stack(5)),
 					)
 				}
 			}

@@ -3,33 +3,31 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package dstack
+package util
 
 import (
 	"runtime/debug"
 	"slices"
 	"strings"
-
-	"github.com/archnum/sdk.base/util"
 )
 
-func String(n int) string {
+func Stack(n int) string {
 	stack := strings.Split(string(debug.Stack()), "\n")
 
-	ss := []string{}
+	tmp := []string{}
 
 	for i := len(stack) - 1; i > 0; i-- {
-		ss = append(ss, stack[i])
+		tmp = append(tmp, stack[i])
 
 		if strings.HasPrefix(stack[i], "panic(") {
-			ss = ss[0 : len(ss)-2]
+			tmp = tmp[0 : len(tmp)-2]
 			break
 		}
 	}
 
 	stack = stack[:0]
 
-	for _, s := range ss {
+	for _, s := range tmp {
 		if strings.Contains(s, ".go:") {
 			s = strings.TrimSpace(s)
 
@@ -43,7 +41,7 @@ func String(n int) string {
 
 	slices.Reverse(stack)
 
-	n = util.If(len(stack) < n, len(stack), n)
+	n = If(len(stack) < n, len(stack), n)
 
 	return strings.Join(stack[:n], " | ")
 }
