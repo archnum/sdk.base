@@ -14,6 +14,7 @@ import (
 	"github.com/archnum/sdk.base/kv"
 	"github.com/archnum/sdk.base/logger/handler"
 	"github.com/archnum/sdk.base/logger/level"
+	"github.com/archnum/sdk.base/logger/manager"
 	"github.com/archnum/sdk.base/logger/record"
 	"github.com/archnum/sdk.base/uuid"
 )
@@ -23,22 +24,35 @@ var (
 )
 
 type (
+	// fieldalignment
 	Logger struct {
-		id       uuid.UUID
-		name     string
-		level    level.Var
-		with     []kv.KeyValue
-		handlers map[string]handler.Handler
-		mutex    sync.Mutex
+		handlers   map[string]handler.Handler
+		id         uuid.UUID
+		name       string
+		with       []kv.KeyValue
+		level      level.Var
+		mutex      sync.Mutex
+		registered bool
 	}
 )
 
 func New(id uuid.UUID, name string) *Logger {
+	// TODO: vérifer que id est bien un UUID ?
+
 	if name == "" {
 		name = "main"
 	}
 
 	return &Logger{id: id, name: name, handlers: make(map[string]handler.Handler, 0)}
+}
+
+func (l *Logger) Register() {
+	manager.RegisterLogger(l.id, l.name, l.level.Level())
+
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	l.registered = true
 }
 
 func (l *Logger) Level() level.Level {
@@ -47,6 +61,13 @@ func (l *Logger) Level() level.Level {
 
 func (l *Logger) SetLevel(level level.Level) {
 	l.level.Set(level)
+
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	if l.registered {
+		manager.SetLevel(l.id, level)
+	}
 }
 
 func (l *Logger) AddHandler(h handler.Handler) {

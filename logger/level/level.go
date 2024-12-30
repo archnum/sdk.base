@@ -44,6 +44,23 @@ func (level Level) Level() Level {
 	return level
 }
 
+func (level Level) String() string {
+	switch level {
+	case Trace:
+		return "TRACE"
+	case Debug:
+		return "DEBUG"
+	case Notice:
+		return "NOTICE"
+	case Warning:
+		return "WARNING"
+	case Error:
+		return "ERROR"
+	default:
+		return "INFO"
+	}
+}
+
 type (
 	Var struct {
 		level atomic.Int64

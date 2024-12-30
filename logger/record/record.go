@@ -18,13 +18,14 @@ const (
 )
 
 type (
+	// fieldalignment
 	Record struct {
 		Timestamp  time.Time
 		LoggerID   string
 		LoggerName string
-		Level      level.Level
 		Message    string
 		KeyValues  []kv.KeyValue
+		Level      level.Level
 	}
 )
 
