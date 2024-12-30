@@ -33,14 +33,14 @@ func (m *manager) registerLogger(l *Logger) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	m.loggers[l.ID] = l
+	m.loggers[l.id] = l
 }
 
 func RegisterLogger(id uuid.UUID, name string, level level.Level) {
 	l := &Logger{
-		ID:    id,
-		Name:  name,
-		Level: level,
+		id:    id,
+		name:  name,
+		level: level,
 	}
 
 	_manager.registerLogger(l)
@@ -51,7 +51,7 @@ func (m *manager) setLevel(id uuid.UUID, level level.Level) {
 	defer m.mutex.Unlock()
 
 	if l, ok := m.loggers[id]; ok {
-		l.Level = level
+		l.level = level
 	}
 }
 

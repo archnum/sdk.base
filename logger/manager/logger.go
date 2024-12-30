@@ -12,11 +12,23 @@ import (
 
 type (
 	Logger struct {
-		ID    uuid.UUID
-		Name  string
-		Level level.Level
+		id    uuid.UUID
+		name  string
+		level level.Level
 	}
 )
+
+func (l *Logger) ID() string {
+	return string(l.id)
+}
+
+func (l *Logger) Name() string {
+	return l.name
+}
+
+func (l *Logger) Level() string {
+	return l.level.String()
+}
 
 /*
 ####### END ############################################################################################################
