@@ -24,16 +24,16 @@ const (
 )
 
 func StringToLevel(level string) Level {
-	switch strings.ToUpper(level) {
-	case "TRACE":
+	switch strings.ToLower(level) {
+	case "trace":
 		return Trace
-	case "DEBUG":
+	case "debug":
 		return Debug
-	case "NOTICE":
+	case "notice":
 		return Notice
-	case "WARNING":
+	case "warning":
 		return Warning
-	case "ERROR":
+	case "error":
 		return Error
 	default:
 		return Info
@@ -43,17 +43,17 @@ func StringToLevel(level string) Level {
 func (level Level) String() string {
 	switch level {
 	case Trace:
-		return "TRACE"
+		return "trace"
 	case Debug:
-		return "DEBUG"
+		return "debug"
 	case Notice:
-		return "NOTICE"
+		return "notice"
 	case Warning:
-		return "WARNING"
+		return "warning"
 	case Error:
-		return "ERROR"
+		return "error"
 	default:
-		return "INFO"
+		return "info"
 	}
 }
 
