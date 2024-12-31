@@ -26,13 +26,12 @@ var (
 type (
 	// fieldalignment
 	Logger struct {
-		handlers   map[string]handler.Handler
-		id         uuid.UUID
-		name       string
-		with       []kv.KeyValue
-		level      level.Var
-		mutex      sync.Mutex
-		registered bool
+		handlers map[string]handler.Handler
+		id       uuid.UUID
+		name     string
+		with     []kv.KeyValue
+		level    level.Var
+		mutex    sync.Mutex
 	}
 )
 
@@ -47,12 +46,15 @@ func New(id uuid.UUID, name string) *Logger {
 }
 
 func (l *Logger) Register() {
-	manager.RegisterLogger(l.id, l.name, l.level.Level())
+	manager.RegisterLogger(l)
+}
 
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
+func (l *Logger) ID() uuid.UUID {
+	return l.id
+}
 
-	l.registered = true
+func (l *Logger) Name() string {
+	return l.name
 }
 
 func (l *Logger) Level() level.Level {
@@ -61,13 +63,6 @@ func (l *Logger) Level() level.Level {
 
 func (l *Logger) SetLevel(level level.Level) {
 	l.level.Set(level)
-
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
-
-	if l.registered {
-		manager.SetLevel(l.id, level)
-	}
 }
 
 func (l *Logger) AddHandler(h handler.Handler) {

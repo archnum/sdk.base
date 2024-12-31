@@ -40,10 +40,6 @@ func StringToLevel(level string) Level {
 	}
 }
 
-func (level Level) Level() Level {
-	return level
-}
-
 func (level Level) String() string {
 	switch level {
 	case Trace:
