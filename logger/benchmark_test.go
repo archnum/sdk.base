@@ -51,7 +51,6 @@ func Benchmark_Slog(b *testing.B) {
 			slog.String("string", "abcdefghijklmnopqrstuvwxyz"),
 		)
 	}
-
 }
 
 /*
