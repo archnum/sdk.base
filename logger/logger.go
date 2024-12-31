@@ -36,10 +36,12 @@ type (
 )
 
 func New(id uuid.UUID, name string) *Logger {
-	// TODO: vérifer que id est bien un UUID ?
+	if id == "" {
+		id = uuid.Zero
+	}
 
 	if name == "" {
-		name = "main"
+		name = "?"
 	}
 
 	return &Logger{id: id, name: name, handlers: make(map[string]handler.Handler, 0)}
@@ -99,7 +101,7 @@ func (l *Logger) With(kvs ...kv.KeyValue) *Logger {
 func formatAndLog(h handler.Handler, buf *buffer.Buffer, rec *record.Record) {
 	defer func() {
 		if data := recover(); data != nil {
-			_ = 0 // TODO
+			log.Print(data) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 		}
 	}()
 
