@@ -32,9 +32,15 @@ func Log(msg string, kvs ...kv.KeyValue) {
 	}
 }
 
-func Logf(format string, a ...any) {
+func LogArgs(msg string, args ...any) {
 	if _enabled {
-		_logger.Log(level.Trace, fmt.Sprintf(format, a...)) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+		_logger.LogArgs(level.Trace, msg, args...) //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	}
+}
+
+func Logf(format string, args ...any) {
+	if _enabled {
+		_logger.Log(level.Trace, fmt.Sprintf(format, args...)) //:::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	}
 }
 
