@@ -6,6 +6,7 @@
 package tracer
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/archnum/sdk.base/kv"
@@ -28,6 +29,12 @@ func init() {
 func Log(msg string, kvs ...kv.KeyValue) {
 	if _enabled {
 		_logger.Log(level.Trace, msg, kvs...) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	}
+}
+
+func Logf(format string, a ...any) {
+	if _enabled {
+		_logger.Log(level.Trace, fmt.Sprintf(format, a...)) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	}
 }
 
