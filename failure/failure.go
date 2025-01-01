@@ -14,13 +14,6 @@ var (
 	_bufPool = buffer.NewPool(256)
 )
 
-type (
-	Failure struct {
-		Cause   error
-		Message string
-	}
-)
-
 func format(buf *buffer.Buffer, msg string, kvs []kv.KeyValue) {
 	buf.AppendString(msg)
 
@@ -30,18 +23,35 @@ func format(buf *buffer.Buffer, msg string, kvs []kv.KeyValue) {
 	}
 }
 
-func New(msg string, kvs ...kv.KeyValue) *Failure {
+type (
+	base struct {
+		message string
+	}
+)
+
+func New(msg string, kvs ...kv.KeyValue) error {
 	buf := _bufPool.Get()
 	defer buf.Free()
 
 	format(buf, msg, kvs)
 
-	return &Failure{Message: buf.String()}
+	return &base{message: buf.String()}
 }
 
-func WithMessage(cause error, msg string, kvs ...kv.KeyValue) *Failure {
-	if cause == nil {
-		return New(msg, kvs...)
+func (b *base) Error() string {
+	return b.message
+}
+
+type (
+	withMessage struct {
+		cause   error
+		message string
+	}
+)
+
+func WithMessage(err error, msg string, kvs ...kv.KeyValue) error {
+	if err == nil {
+		return nil
 	}
 
 	buf := _bufPool.Get()
@@ -50,31 +60,24 @@ func WithMessage(cause error, msg string, kvs ...kv.KeyValue) *Failure {
 	format(buf, msg, kvs)
 
 	buf.AppendString(" >> ")
-	buf.AppendString(cause.Error())
+	buf.AppendString(err.Error())
 
-	return &Failure{
-		Cause:   cause,
-		Message: buf.String(),
+	return &withMessage{
+		cause:   err,
+		message: buf.String(),
 	}
+}
+
+func (wm *withMessage) Error() string {
+	return wm.message
+}
+
+func (wm *withMessage) Unwrap() error {
+	return wm.cause
 }
 
 func Wrap(cause, err error) error {
-	if cause == nil {
-		return err
-	}
-
-	return &Failure{
-		Cause:   cause,
-		Message: err.Error(),
-	}
-}
-
-func (f *Failure) Error() string {
-	return f.Message
-}
-
-func (f *Failure) Unwrap() error {
-	return f.Cause
+	return WithMessage(cause, err.Error())
 }
 
 /*
