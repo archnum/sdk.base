@@ -15,8 +15,9 @@ func (s Sentinel) Error() string {
 }
 
 const (
-	NoError  = Sentinel("no error")
-	NotFound = Sentinel("not found")
+	NoError        = Sentinel("no error")
+	NotFound       = Sentinel("not found")
+	NotImplemented = Sentinel("not implemented")
 )
 
 /*

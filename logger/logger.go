@@ -8,6 +8,7 @@ package logger
 import (
 	"log"
 	"maps"
+	"os"
 	"sync"
 
 	"github.com/archnum/sdk.base/buffer"
@@ -101,14 +102,22 @@ func (l *Logger) With(kvs ...kv.KeyValue) *Logger {
 func formatAndLog(h handler.Handler, buf *buffer.Buffer, rec *record.Record) {
 	defer func() {
 		if data := recover(); data != nil {
-			log.Print(data) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			log.New(
+				os.Stderr,
+				"An error occurred",
+				log.LstdFlags|log.Llongfile).Print(data) ///////////////////////////////////////////////////////////////
 		}
 	}()
 
 	h.Formatter().Format(buf, rec)
 
 	if err := h.Log(rec.Level, buf.Bytes()); err != nil {
-		log.Print(err) //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+		if data := recover(); data != nil {
+			log.New(
+				os.Stderr,
+				"An error occurred",
+				log.LstdFlags|log.Llongfile).Print(err) ////////////////////////////////////////////////////////////////
+		}
 	}
 }
 
