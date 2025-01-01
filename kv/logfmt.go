@@ -26,7 +26,6 @@ func LogfmtAppendString(buf *buffer.Buffer, s string) {
 	} else {
 		buf.AppendString(s)
 	}
-
 }
 
 func Logfmt(buf *buffer.Buffer, kvs []KeyValue) {

@@ -11,6 +11,13 @@ import (
 	"strings"
 )
 
+func CleanString(s string) string {
+	s = strings.ReplaceAll(s, "\n", "|")
+	s = strings.ReplaceAll(s, "\t", " ")
+
+	return s
+}
+
 func FileExist(path string) bool {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) {

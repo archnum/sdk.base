@@ -8,6 +8,7 @@ package failure
 import (
 	"github.com/archnum/sdk.base/buffer"
 	"github.com/archnum/sdk.base/kv"
+	"github.com/archnum/sdk.base/util"
 )
 
 var (
@@ -60,7 +61,7 @@ func WithMessage(err error, msg string, kvs ...kv.KeyValue) error {
 	format(buf, msg, kvs)
 
 	buf.AppendString(" >> ")
-	buf.AppendString(err.Error())
+	buf.AppendString(util.CleanString(err.Error()))
 
 	return &withMessage{
 		cause:   err,
