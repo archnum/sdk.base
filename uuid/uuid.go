@@ -26,15 +26,6 @@ var (
 	_uuidRE = regexp.MustCompile(`^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$`)
 )
 
-func Validate(id UUID) bool {
-	return _uuidRE.MatchString(string(id))
-}
-
-func ConvertString(value string) (UUID, bool) {
-	id := UUID(value)
-	return id, Validate(id)
-}
-
 func generate(reader io.Reader) (UUID, error) {
 	var (
 		bs [16]byte
@@ -66,7 +57,28 @@ func New() (UUID, error) {
 
 func String() (string, error) {
 	id, err := New()
-	return string(id), err
+	if err != nil {
+		return "", err
+	}
+
+	return id.String(), err
+}
+
+func ConvertString(value string) (UUID, bool) {
+	id := UUID(value)
+	if id.Validate() {
+		return id, true
+	}
+
+	return "", false
+}
+
+func (id UUID) String() string {
+	return string(id)
+}
+
+func (id UUID) Validate() bool {
+	return _uuidRE.MatchString(string(id))
 }
 
 /*

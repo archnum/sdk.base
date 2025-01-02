@@ -125,7 +125,7 @@ func (l *Logger) FormatAndLog(level level.Level, msg string, kvs ...kv.KeyValue)
 	rec := record.New()
 	defer rec.Free()
 
-	rec.LoggerID = string(l.id)
+	rec.LoggerID = l.id.String()
 	rec.LoggerName = l.name
 	rec.Level = level
 	rec.Message = msg
