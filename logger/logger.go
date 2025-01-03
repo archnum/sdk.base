@@ -208,23 +208,7 @@ func (l *Logger) LogArgs(level level.Level, msg string, args ...any) {
 		return
 	}
 
-	if len(args)%2 != 0 {
-		l.FormatAndLog(level, msg, kv.String("ERROR", "odd number of arguments"))
-		return
-	}
-
-	var kvs []kv.KeyValue
-
-	for i := 0; i < len(args); i += 2 {
-		key, ok := args[i].(string)
-		if !ok {
-			key = "?"
-		}
-
-		kvs = append(kvs, kv.Any(key, args[i+1]))
-	}
-
-	l.FormatAndLog(level, msg, kvs...)
+	l.FormatAndLog(level, msg, ArgsToKV(args)...)
 }
 
 /*
