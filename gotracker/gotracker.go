@@ -6,6 +6,8 @@
 package gotracker
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -22,13 +24,15 @@ var (
 
 type (
 	GoTracker struct {
-		name      string
+		errs      error
+		ctx       context.Context
 		logger    *logger.Logger
+		cancel    context.CancelFunc
+		name      string
 		waitGroup sync.WaitGroup
-		stopCh    chan struct{}
 	}
 
-	GoFunc func(chan struct{})
+	GoFunc func(ctx context.Context) error
 
 	Option func(*GoTracker)
 )
@@ -46,13 +50,13 @@ func WithLogger(logger *logger.Logger) Option {
 }
 
 func New(opts ...Option) *GoTracker {
-	gt := &GoTracker{
-		stopCh: make(chan struct{}),
-	}
+	gt := &GoTracker{}
 
 	for _, option := range opts {
 		option(gt)
 	}
+
+	gt.ctx, gt.cancel = context.WithCancel(context.Background())
 
 	return gt
 }
@@ -90,16 +94,24 @@ func (gt *GoTracker) Go(name string, fn GoFunc) {
 			}
 		}()
 
-		fn(gt.stopCh)
+		gt.errs = errors.Join(gt.errs, fn(gt.ctx))
 	}()
 }
 
+func (gt *GoTracker) Done() <-chan struct{} {
+	return gt.ctx.Done()
+}
+
 func (gt *GoTracker) Stop() {
-	close(gt.stopCh)
+	gt.cancel()
 }
 
 func (gt *GoTracker) Wait() {
 	gt.waitGroup.Wait()
+}
+
+func (gt *GoTracker) Err() error {
+	return gt.errs
 }
 
 /*
