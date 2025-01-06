@@ -105,19 +105,17 @@ func formatAndLog(h handler.Handler, buf *buffer.Buffer, rec *record.Record) {
 			log.New(
 				os.Stderr,
 				"An error occurred",
-				log.LstdFlags|log.Llongfile).Print(data) ///////////////////////////////////////////////////////////////
+				log.LstdFlags|log.Llongfile).Print(data) //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 		}
 	}()
 
 	h.Formatter().Format(buf, rec)
 
 	if err := h.Log(rec.Level, buf.Bytes()); err != nil {
-		if data := recover(); data != nil {
-			log.New(
-				os.Stderr,
-				"An error occurred",
-				log.LstdFlags|log.Llongfile).Print(err) ////////////////////////////////////////////////////////////////
-		}
+		log.New(
+			os.Stderr,
+			"An error occurred",
+			log.LstdFlags|log.Llongfile).Print(err) //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	}
 }
 
